@@ -1,0 +1,61 @@
+install.packages('FactoMineR')
+install.packages('factoextra')
+install.packages('tidyverse')
+install.packages('ggplot2')
+
+require(FactoMineR)
+require(factoextra)
+require(tidyverse)
+require(ggplot2)
+
+df_enem_anacor <- read.csv("C:/Users/mih98/Downloads/anacor - enem/df_enem_anacor.csv", header=TRUE, sep = ";")
+
+#Análise de correspondência simples - Dependência escolar por sucesso
+res_ca <- table(df_enem_anacor$NM_DEPENDENCIA_ADM_ESC, df_enem_anacor$SUCESSO)
+res_ca
+
+dependencia <- CA(res_ca)
+
+#Análise de correspondência simples - Sucesso por raça/cor
+res_ca2 <- table(df_enem_anacor$SUCESSO, df_enem_anacor$NM_COR_RACA)
+res_ca2
+
+dependencia2 <- CA(res_ca2)
+
+#Análise de correspondência múltipla - Dependência escolar por renda e cor/raça
+
+df2 = df_enem_anacor[, c('NM_DEPENDENCIA_ADM_ESC', 'NM_COR_RACA', 'Q006')]
+
+#MCA
+res_mca <- MCA(df2, graph = TRUE)
+
+#Scree-plot
+fviz_screeplot(res_mca, addlabels = TRUE)
+
+#Gráfico das variáveis
+fviz_mca_var(res_mca, choice = "mca.cor",
+             repel = TRUE,
+             ggtheme = theme_minimal()) + labs(title = "MCA - Variáveis")
+
+#Gráfico das categorias
+fviz_mca_var(res_mca, col.var = "black", shape.var = 1,
+             repel = TRUE)
+
+#Análise de correspondência múltipla - Dependência escolar por renda e nota
+df3 <- df_enem_anacor[, c('NM_DEPENDENCIA_ADM_ESC', 'Q006', 'SUCESSO')]
+
+res_mca2 <- MCA(df3, graph = FALSE)
+
+#Scree-plot
+fviz_screeplot(res_mca2, addlabels = TRUE)
+
+#Gráfico das variáveis
+fviz_mca_var(res_mca2, choice = "mca.cor",
+             repel = TRUE,
+             ggtheme = theme_minimal()) + labs(title = "MCA - Variáveis")
+
+#Gráfico das categorias
+fviz_mca_var(res_mca2, col.var = "black", shape.var = 1,
+             repel = TRUE)
+
+
